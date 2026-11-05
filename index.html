@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tap Challenge Games</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#fff}
+header{padding:18px 16px;background:#111827;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.logo{font-weight:800;font-size:22px}.coins{background:#1e293b;padding:9px 13px;border-radius:20px;color:#facc15}
+main{max-width:760px;margin:auto;padding:24px 16px}.hero{text-align:center;padding:25px 0}.hero h1{font-size:38px;margin:10px 0}.hero p{color:#cbd5e1}
+.card{background:#1e293b;border-radius:20px;padding:20px;margin:18px 0;box-shadow:0 8px 30px #0004}
+button{border:0;border-radius:12px;padding:13px 20px;font-size:16px;font-weight:700;cursor:pointer}
+.primary{background:#2563eb;color:white}.target{width:120px;height:120px;border-radius:50%;background:#2563eb;color:white;display:none;align-items:center;justify-content:center;margin:30px auto;font-size:18px}
+.stats{display:flex;gap:10px;justify-content:center}.stat{background:#0f172a;padding:12px 18px;border-radius:12px;text-align:center}.num{font-size:25px;font-weight:800}
+#message{text-align:center;min-height:30px;color:#cbd5e1}
+table{width:100%;border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #334155;text-align:left}
+footer{text-align:center;color:#94a3b8;padding:25px}
+</style>
+</head>
+<body>
+<header><div class="logo">🎮 Tap Challenge</div><div class="coins">🪙 <span id="coins">100</span></div></header>
+<main>
+<section class="hero"><h1>Tap Challenge Games</h1><p>Tap fast. Score more. Beat your high score.</p></section>
+
+<section class="card">
+<div class="stats">
+<div class="stat">Score<div class="num" id="score">0</div></div>
+<div class="stat">Time<div class="num" id="time">30</div></div>
+<div class="stat">Best<div class="num" id="best">0</div></div>
+</div>
+<div id="message">Press START to begin.</div>
+<div id="target" class="target">TAP!</div>
+<div style="text-align:center"><button class="primary" id="start">START GAME</button></div>
+</section>
+
+<section class="card">
+<h2>🪙 Virtual Coins</h2>
+<p>Coins are only virtual game points. They have no cash value and cannot be withdrawn.</p>
+<button class="primary" id="add">+ Add 50 Demo Coins</button>
+</section>
+
+<section class="card">
+<h2>🏆 Leaderboard</h2>
+<table><thead><tr><th>#</th><th>Player</th><th>Score</th></tr></thead>
+<tbody id="board"></tbody></table>
+</section>
+</main>
+<footer>Tap Challenge Games • Demo virtual-currency version</footer>
+<script>
+const $=id=>document.getElementById(id);
+let score=0,time=30,coins=Number(localStorage.coins||100),best=Number(localStorage.best||0),timer=null;
+$("coins").textContent=coins;$("best").textContent=best;
+function move(){let t=$("target");t.style.display="flex";t.style.marginLeft=(10+Math.random()*55)+"%";t.style.marginTop=(20+Math.random()*20)+"px"}
+function startGame(){score=0;time=30;$("score").textContent=0;$("time").textContent=30;$("message").textContent="Tap the target!";$("start").disabled=true;move();
+timer=setInterval(()=>{time--;$("time").textContent=time;if(time<=0){clearInterval(timer);finish()}},1000)}
+function finish(){ $("target").style.display="none";$("start").disabled=false;$("message").textContent="Time up! Your score: "+score;if(score>best){best=score;localStorage.best=best;$("best").textContent=best}
+coins+=score;localStorage.coins=coins;$("coins").textContent=coins;render()}
+$("target").onclick=()=>{if(time>0){score++;$("score").textContent=score;move()}};
+$("start").onclick=startGame;
+$("add").onclick=()=>{coins+=50;localStorage.coins=coins;$("coins").textContent=coins};
+function render(){let rows=[["1","You",best],["2","Player 2",42],["3","Player 3",35]];$("board").innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}
+render();
+</script>
+</body></html>
